@@ -1,0 +1,89 @@
+#%RAML 1.0
+title: Order API
+
+types:
+  Order: !include /Data Types/OrderdataType.raml
+  Price: !include /Data Types/PricedataType.raml
+
+securitySchemes:
+  Secure: !include /securityScheme.raml
+securedBy: [Secure]
+
+
+
+/Order:
+  post:
+    body:
+      application/json:
+        type: Order
+        examples:
+          input: !include /Example/orderExampleNoID.raml
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              value: Order submited successfully....But not really
+  /{Id}:
+    put:
+     body:
+      application/json:
+        type: Order
+        examples:
+          input: !include /Example/orderExampleNoID.raml
+     responses:
+      200:
+        body:
+          application/json:
+            example:
+              value: Order updated successfully....But not really
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                value: Order cancelled....But not really
+
+/Price:
+  get:
+    description: Get price of single unit
+    queryParameters:
+      product:
+        required: true
+        enum:
+          - T.V.
+          - Desktop
+          - Laptop
+    responses:
+      200:
+        body:
+          application/json:
+            examples:
+              output: !include /Example/priceExample.raml
+              
+
+  /ByUnits:
+    get:
+      description: get price of product by its quantity
+      queryParameters:
+       product:
+        required: true
+        enum:
+          - T.V.
+          - Desktop
+          - Laptop
+       units:
+         required:  true
+         type: integer
+      responses:
+       200:
+         body:
+          application/json:
+            examples:
+              output: !include /Example/unitPriceExample.raml
+  
+            
+                                                  
+    
+

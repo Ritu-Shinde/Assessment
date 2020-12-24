@@ -1,0 +1,12 @@
+#%RAML 1.0 SecurityScheme
+type: x-client-authorization
+description: Its Client Authorization Security
+describedBy:
+  headers:
+    client-id:
+      description: Client ID is required
+    client-secret:
+      description:  Client Secret is required
+  responses:
+    401:
+      description: UNAUTHORIZED ACCESS
