@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="flights-appFlow" doc:id="ac3e7e88-3598-472c-8703-20f563f3941e" >
+		<http:listener doc:name="Listener" doc:id="28a080c4-9a7e-479d-9e5a-8d081cf4034d" config-ref="HTTP_Listener_config" path="/test"/>
+		<db:select doc:id="d11b7bcb-5e31-42ce-a2ea-b7de9349c46c" config-ref="Database_Config">
+			<db:sql ><![CDATA[Select * from Flights]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="0a58fec7-12e6-4a22-9778-fc5472c4a91d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4a9fc527-6bb6-467b-9630-c9a1d94a3c8a" />
+	</flow>
+	<flow name="Copy_of_flights-appFlow" doc:id="ad648b84-ae72-4bd2-8b80-575f431c2d73" >
+		<http:listener doc:name="Listener" doc:id="f0aa30db-8e93-44d3-ba3b-f29f526f2a16" config-ref="HTTP_Listener_config" path="/test1" />
+		<db:insert doc:name="Insert" doc:id="42583a87-de1a-48d1-9c40-748e765ffbf3" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO Flights(F_ID, F_NAME, F_DEST, F_PRICE, F_EMPTYSEATS)
+VALUES (:F_ID, :F_NAME, :F_DEST, :F_PRICE, :F_EMPTYSEATS)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	F_ID: 102,
+	F_NAME: "Riya",
+	F_DEST: "Mumbai",
+	F_PRICE: 1300,
+	F_EMPTYSEATS:20
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="5241f839-5fca-40f0-b9d7-a4a5142cb021" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="9d29e132-a28f-4b0b-9e18-e94f9fdc2ef8" />
+	</flow>
+</mule>
